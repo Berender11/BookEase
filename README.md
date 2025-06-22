@@ -20,6 +20,5 @@ BookEase is a full-featured Flask web application that allows users to register,
 - Deployed on Render
 
 ## 🌐 Live Demo
-Coming soon or add your Render link here:  
-`https://your-app-name.onrender.com`
+`https://bookease-oxuh.onrender.com`
 
