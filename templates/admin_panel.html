@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block content %}
+<h2>All Appointments</h2>
+
+<table border="1" cellpadding="6" width="100%">
+    <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Update</th>
+    </tr>
+    {% for appt in appointments %}
+    <tr>
+        <td>{{ appt.id }}</td>
+        <td>{{ appt.user.email }}</td>
+        <td>{{ appt.date }}</td>
+        <td>{{ appt.time }}</td>
+        <td>{{ appt.status }}</td>
+        <td>
+            <form method="POST" style="display:inline;">
+                <input type="hidden" name="appt_id" value="{{ appt.id }}">
+                <select name="status">
+                    <option value="Pending" {% if appt.status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Confirmed" {% if appt.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                    <option value="Cancelled" {% if appt.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                    <option value="Completed" {% if appt.status == 'Completed' %}selected{% endif %}>Completed</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div style="margin-top: 32px; text-align: center;">
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+</div>
+{% endblock %}
