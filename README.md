@@ -47,9 +47,11 @@ cd BookEase
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
+```
 
-onfigure these variables in app.py:
+Configure these variables in `app.py`:
 
+```env
 SECRET_KEY=your_secret_key
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
@@ -57,6 +59,26 @@ MAIL_USE_TLS=true
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
 MAIL_DEFAULT_SENDER=your_email@gmail.com
+```
 
-FINALLY
+Finally:
+
+```bash
 python app.py
+```
+
+---
+
+## 💡 Future Enhancements
+
+- [ ] Google Calendar integration
+- [ ] Email appointment reminders
+- [ ] Rescheduling and cancellation by users
+- [ ] Pagination and filters in admin panel
+- [ ] SMS notifications via Twilio
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).
