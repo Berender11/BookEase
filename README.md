@@ -33,11 +33,11 @@
 
 ---
 
-## 📸 Screenshots (optional)
+<!-- ## 📸 Screenshots (optional)
 
 _Add screenshots of login page, dashboard, booking form, and admin panel here for better presentation._
 
----
+--- -->
 
 ## 📂 How to Run Locally
 
