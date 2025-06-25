@@ -7,12 +7,61 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 40px;
+            padding: 0;
+            margin: 0;
             background-color: #f4f4f4;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 98vw;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #2a4d69;
+            padding: 0 24px;
+            height: 56px;
+            border-radius: 0;
+            box-shadow: 0 2px 8px rgba(42,77,105,0.07);
+        }
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .navbar-logo img {
+            height: 32px;
+            margin-right: 10px;
+        }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .navbar-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.2s;
+            padding: 8px 18px;
+            border-radius: 6px;
+            line-height: 1.5;
+            display: inline-block;
+        }
+        .navbar-links a:hover {
+            color: #e0e0e0;
+            background: rgba(255,255,255,0.08);
         }
         .container {
             max-width: 600px;
-            margin: auto;
+            margin: 96px auto 0 auto;
             background: white;
             padding: 30px;
             border-radius: 10px;
@@ -34,9 +83,40 @@
         a:hover {
             text-decoration: underline;
         }
+        @media (max-width: 700px) {
+            .container {
+                margin-top: 88px;
+                padding: 16px 4px;
+            }
+            .navbar {
+                padding: 0 8px;
+            }
+            .navbar-links a {
+                padding: 8px 8px;
+            }
+        }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <a href="{{ url_for('landing') }}" class="navbar-logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="BookEase Logo" onerror="this.style.display='none'">
+            BookEase
+        </a>
+        <div class="navbar-links">
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin_panel') }}">Admin Panel</a>
+                {% else %}
+                    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
     <div class="container">
         {% with messages = get_flashed_messages() %}
             {% if messages %}

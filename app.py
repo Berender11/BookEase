@@ -6,18 +6,22 @@ from datetime import datetime
 from models import db, User, Appointment
 from forms import LoginForm, RegisterForm, AppointmentForm
 from flask_mail import Mail, Message
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'super-secret-key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///appointments.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS') == 'True'
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'berendery1@gmail.com'
-app.config['MAIL_PASSWORD'] = 'ipwr wepn qemp jvup'
-app.config['MAIL_DEFAULT_SENDER'] = 'berendery1@gmail.com'
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 mail = Mail(app)
 
 db.init_app(app)
@@ -30,13 +34,9 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
-
 @app.route('/')
-def home():
-    return redirect(url_for('login'))
+def landing():
+    return render_template('landing.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -120,16 +120,35 @@ def admin_panel():
 
     appointments = Appointment.query.all()
 
-    if request.method == 'POST':
-        appt_id = request.form.get('appt_id')
-        new_status = request.form.get('status')
-        appt = Appointment.query.get(int(appt_id))
-        if appt:
-            appt.status = new_status
+    if request.method == 'POST' and 'delete_id' not in request.form:
+        updated = False
+        for appt in appointments:
+            new_status = request.form.get(f'status_{appt.id}')
+            if new_status and new_status != appt.status:
+                appt.status = new_status
+                updated = True
+        if updated:
             db.session.commit()
-            flash('Appointment status updated.')
+            flash('Appointment statuses updated.')
+        else:
+            flash('No changes made.')
 
     return render_template('admin_panel.html', appointments=appointments)
+
+@app.route('/delete_appointment', methods=['POST'])
+@login_required
+def delete_appointment():
+    if not current_user.is_admin:
+        flash("Unauthorized access.")
+        return redirect(url_for('dashboard'))
+    appt_id = request.form.get('delete_id')
+    if appt_id:
+        appt = Appointment.query.get(int(appt_id))
+        if appt:
+            db.session.delete(appt)
+            db.session.commit()
+            flash('Appointment deleted.')
+    return redirect(url_for('admin_panel'))
 
 if __name__ == '__main__':
     with app.app_context():
